@@ -4,11 +4,12 @@ name := "newslearning"
 
 version := "0.1"
 
-scalaVersion := "2.11.0"
+scalaVersion := "2.10.4"
 
 libraryDependencies ++= Seq(
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.0",
   "net.databinder.dispatch" %% "dispatch-jsoup" % "0.11.0",
+  "com.typesafe.slick" %% "slick" % "2.0.1",
   "com.h2database" % "h2" % "1.3.174",
   "org.yaml" % "snakeyaml" % "1.13"
 )

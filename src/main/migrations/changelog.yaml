@@ -25,3 +25,24 @@ databaseChangeLog:
       rollback:
         - dropTable:
           tableName: article
+  - changeSet:
+      id: 2
+      author: cmc
+      changes:
+        - createTable:
+            tableName: http_cache
+            columns:
+              - column:
+                  name: url
+                  type: varchar(200)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: body
+                  type: text
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+          tableName: http_cache
