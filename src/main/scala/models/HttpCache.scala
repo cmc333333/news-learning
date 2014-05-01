@@ -18,8 +18,7 @@ class HttpCache(tag: Tag) extends Table[(String, String)](tag, "HTTP_CACHE") {
 object HttpCache {
   val cache = TableQuery[HttpCache]
   def proxy(urlStr:String)(implicit session:Session):Future[Document] = {
-    val existing = cache.filter(_.url === urlStr).list 
-    existing match {
+    cache.filter(_.url === urlStr).list match {
       case (body, url) :: _ => Future { Jsoup.parse(body, url) }
       case nil => for (result <- fetch(urlStr)) yield {
         cache += (urlStr, result.toString)

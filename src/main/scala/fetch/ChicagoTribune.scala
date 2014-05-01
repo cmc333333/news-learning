@@ -7,7 +7,7 @@ import scala.slick.driver.H2Driver.simple._
 
 import dispatch._, Defaults._
 
-import info.cmlubinski.newslearning.models.HttpCache
+import info.cmlubinski.newslearning.models.{articles, HttpCache}
 
 
 object ChicagoTribune {
@@ -22,10 +22,11 @@ object ChicagoTribune {
         implicit val session = Database.forURL("jdbc:h2:file:/tmp/db",
                         driver="org.h2.Driver").createSession
         val article = for (soup <- HttpCache.proxy(link)) yield {
-          println(title)
           val body = soup.select("#story-body-text > p").map(_.text)
                          .mkString("\n")
-          (link, title, body)
+          val entry = (link, title, body)
+          articles += entry
+          entry
         }
         Await.ready(article, Duration.Inf)
         session.close
