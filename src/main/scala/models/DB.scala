@@ -9,7 +9,16 @@ trait DBProfile {
 }
 
 object DB extends ArticleComponent with CacheComponent with DBProfile {
-  lazy val dbUrl = ConfigFactory.load().getString("db.url")
+  lazy val config = ConfigFactory.load()
+  lazy val dbUrl = config.getString("db.url")
+  lazy val dbUsername = {
+    if (config.hasPath("db.username")) config.getString("db.username")
+    else null
+  }
+  lazy val dbPassword = {
+    if (config.hasPath("db.password")) config.getString("db.password")
+    else null
+  }
   override lazy val profile:JdbcProfile = dbUrl.split(":")(1) match {
     case "derby" => DerbyDriver
     case "h2" => H2Driver
@@ -28,5 +37,6 @@ object DB extends ArticleComponent with CacheComponent with DBProfile {
   }
   lazy val imports = profile.simple
 
-  def createSession = Database.forURL(dbUrl, driver=driver).createSession
+  def createSession = Database.forURL(
+    dbUrl, user=dbUsername, password=dbPassword, driver=driver).createSession
 }

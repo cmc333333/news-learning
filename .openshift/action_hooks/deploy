@@ -1,0 +1,22 @@
+#!/bin/bash
+
+SBT_PATH=$OPENSHIFT_DATA_DIR/sbt
+SBT_DIR=$OPENSHIFT_DATA_DIR/.sbt
+IVY_DIR=$OPENSHIFT_DATA_DIR/.ivy
+
+cd $OPENSHIFT_REPO_DIR
+
+echo -e "\nliquibaseDriver := \"org.postgresql.Driver\"" >> build.sbt
+echo -e "\nliquibaseUrl := \"jdbc:postgresql:newslearning\"" >> build.sbt
+echo -e "\nliquibaseUserName := \"$OPENSHIFT_POSTGRESQL_DB_USERNAME\"" >> build.sbt
+echo -e "\nliquibasePassword := \"$OPENSHIFT_POSTGRESQL_DB_PASSWORD\"" >> build.sbt
+
+echo "db: {" > application.conf
+echo -e "url: \"jdbc:postgresql:newslearning\"" >> application.conf
+echo -e "username: \"$OPENSHIFT_POSTGRESQL_DB_USERNAME\"" >> application.conf
+echo -e "password: \"$OPENSHIFT_POSTGRESQL_DB_PASSWORD\"" >> application.conf
+echo "}" >> application.conf
+
+SBT_OPTS="-XX:MaxPermSize=256m -Xmx768m"
+
+$SBT_PATH/bin/sbt -sbt-dir $SBT_DIR -ivy $IVY_DIR liquibase-update
