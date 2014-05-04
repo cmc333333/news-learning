@@ -3,6 +3,7 @@
 SBT_PATH=$OPENSHIFT_DATA_DIR/sbt
 SBT_DIR=$OPENSHIFT_DATA_DIR/.sbt
 IVY_DIR=$OPENSHIFT_DATA_DIR/.ivy
+APP_CONF=src/main/resources/application.conf
 
 cd $OPENSHIFT_REPO_DIR
 
@@ -11,11 +12,11 @@ echo -e "\nliquibaseUrl := \"jdbc:postgresql://$OPENSHIFT_POSTGRESQL_DB_HOST:$OP
 echo -e "\nliquibaseUsername := \"$OPENSHIFT_POSTGRESQL_DB_USERNAME\"" >> build.sbt
 echo -e "\nliquibasePassword := \"$OPENSHIFT_POSTGRESQL_DB_PASSWORD\"" >> build.sbt
 
-echo "db: {" > application.conf
-echo -e "url: \"jdbc:postgresql://$OPENSHIFT_POSTGRESQL_DB_HOST:$OPENSHIFT_POSTGRESQL_DB_PORT/newslearning\"" >> application.conf
-echo -e "username: \"$OPENSHIFT_POSTGRESQL_DB_USERNAME\"" >> application.conf
-echo -e "password: \"$OPENSHIFT_POSTGRESQL_DB_PASSWORD\"" >> application.conf
-echo "}" >> application.conf
+echo "db: {" > $APP_CONF
+echo -e "url: \"jdbc:postgresql://$OPENSHIFT_POSTGRESQL_DB_HOST:$OPENSHIFT_POSTGRESQL_DB_PORT/newslearning\"" >> $APP_CONF
+echo -e "username: \"$OPENSHIFT_POSTGRESQL_DB_USERNAME\"" >> $APP_CONF
+echo -e "password: \"$OPENSHIFT_POSTGRESQL_DB_PASSWORD\"" >> $APP_CONF
+echo "}" >> $APP_CONF
 
 SBT_OPTS="-XX:MaxPermSize=256m -Xmx768m"
 
