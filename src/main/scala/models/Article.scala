@@ -1,15 +1,17 @@
 package info.cmlubinski.newslearning.models
 
-import scala.slick.driver.H2Driver.simple._
+case class Article(url: String, title: String, body: String)
 
+trait ArticleComponent {
+  this:DBProfile =>
+  import profile.simple._
 
-class Article(tag: Tag) extends Table[(String, String, String)](tag, 
-                                                                "ARTICLE") {
-  def url = column[String]("URL", O.PrimaryKey)
-  def title = column[String]("TITLE")
-  def body = column[String]("BODY")
+  class Articles(tag: Tag) extends Table[Article](tag, "article") {
+    def url = column[String]("url", O.PrimaryKey)
+    def title = column[String]("title")
+    def body = column[String]("body")
 
-  def * = (url, title, body)
+    def * = (url, title, body) <> (Article.tupled, Article.unapply)
+  }
+  val articles = TableQuery[Articles]
 }
-
-object articles extends TableQuery(new Article(_))
