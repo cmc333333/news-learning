@@ -9,8 +9,9 @@ import org.jsoup.nodes.Document
 
 import info.cmlubinski.newslearning.models.{CacheEntry, DB}
 
-object HttpCache {
+class HttpCache {
   import DB.imports._
+  val http = Http.configure(_ setFollowRedirects true)
 
   def proxy(urlStr:String)(implicit session:Session):Future[Document] = {
     DB.cache.filter(_.url === urlStr).list match {
@@ -23,6 +24,6 @@ object HttpCache {
   }
   def fetch[T](urlStr:String,
                trans:(client.Response=>T)=as.jsoup.Document):Future[T] = {
-    Http.configure(_ setFollowRedirects true)(url(urlStr) OK trans)
+    http(url(urlStr) OK trans)
   }
 }

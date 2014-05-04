@@ -27,3 +27,5 @@ liquibaseUsername := ""
 liquibasePassword := ""
 
 liquibaseChangelog := "src/main/migrations/changelog.yaml"
+
+packageArchetype.java_application

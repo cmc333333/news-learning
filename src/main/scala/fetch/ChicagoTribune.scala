@@ -14,22 +14,38 @@ object ChicagoTribune {
   val TRIB_URL = "http://www.chicagotribune.com"
   val RSS_URL = TRIB_URL + "/news/local/breaking/rss2.0.xml"
 
-  def fetchLatest() {
-    for (feed <- HttpCache.fetch(RSS_URL, as.xml.Elem)) {
-      for (item <- feed \\ "item") Future{
+  def fetchAndSaveLatest():Future[Seq[Article]] = {
+    val cache = new HttpCache()
+    for (feed <- cache.fetch(RSS_URL, as.xml.Elem)) yield {
+      implicit val session = DB.createSession
+      val items = for (item <- feed \\ "item") yield Future{
         val title = (item \\ "title")(0).text
         val link = (item \\ "link")(0).text
-        implicit val session = DB.createSession
-        val article = for (soup <- HttpCache.proxy(link)) yield {
+        val article = for (soup <- cache.proxy(link)) yield {
           val body = soup.select("#story-body-text > p").map(_.text)
                          .mkString("\n")
-          val entry = Article(link, title, body)
-          DB.articles += entry
-          entry
+          val art = Article(link, title, body)
+          val previous = for { a <- DB.articles if a.url === link} 
+                         yield (a.title, a.body)
+          if (previous.exists.run) {
+            previous.update((art.title, art.body))
+          } else {
+            DB.articles += art
+          }
+          art
         }
-        Await.ready(article, Duration.Inf)
-        session.close
+        article()
       }
+      val resultsFuture = Future.sequence(items)
+      val results = resultsFuture()
+      session.close
+      results
     }
+  }
+
+  def main(args:Array[String]) {
+    val results = ChicagoTribune.fetchAndSaveLatest()
+    println(results().map(_.title))
+    System.exit(0)
   }
 }
