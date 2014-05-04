@@ -8,7 +8,7 @@ cd $OPENSHIFT_REPO_DIR
 
 echo -e "\nliquibaseDriver := \"org.postgresql.Driver\"" >> build.sbt
 echo -e "\nliquibaseUrl := \"jdbc:postgresql:newslearning\"" >> build.sbt
-echo -e "\nliquibaseUserName := \"$OPENSHIFT_POSTGRESQL_DB_USERNAME\"" >> build.sbt
+echo -e "\nliquibaseUsername := \"$OPENSHIFT_POSTGRESQL_DB_USERNAME\"" >> build.sbt
 echo -e "\nliquibasePassword := \"$OPENSHIFT_POSTGRESQL_DB_PASSWORD\"" >> build.sbt
 
 echo "db: {" > application.conf
