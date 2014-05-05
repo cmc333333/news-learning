@@ -2,5 +2,5 @@
 
 cd $OPENSHIFT_REPO_DIR
 
-./target/universal/stage/bin/newslearning
+./target/start info.cmlubinski.newslearning.fetch.ChicagoTribune
 
