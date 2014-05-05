@@ -21,3 +21,5 @@ echo "}" >> $APP_CONF
 SBT_OPTS="-XX:MaxPermSize=256m -Xmx768m"
 
 $SBT_PATH/bin/sbt -sbt-dir $SBT_DIR -ivy $IVY_DIR liquibase-update
+
+./target/start info.cmlubinski.newslearning.classify.UI $OPENSHIFT_DIY_IP $OPENSHIFT_DIY_PORT &
