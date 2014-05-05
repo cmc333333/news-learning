@@ -2,5 +2,5 @@
 
 cd $OPENSHIFT_REPO_DIR
 
-./target/start info.cmlubinski.newslearning.classify.UI $OPENSHIFT_DIY_IP $OPENSHIFT_DIY_PORT &
+./target/start info.cmlubinski.newslearning.classify.UI $OPENSHIFT_DIY_IP $OPENSHIFT_DIY_PORT true &
 
