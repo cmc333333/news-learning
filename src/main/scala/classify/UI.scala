@@ -2,9 +2,9 @@ package info.cmlubinski.newslearning.classify
 
 import unfiltered.Cycle
 import unfiltered.filter.Planify
+import unfiltered.jetty.Http
 import unfiltered.request._
 import unfiltered.response._
-import unfiltered.jetty.Http
 
 
 object UI {
@@ -19,7 +19,7 @@ object UI {
           case "true" :: _ => HTTPSGuard{ display }
           case _ => display
         }
-        Http(port.toInt, hostname).plan(Planify(plan)).run()
+        Http(port.toInt, hostname).plan(Planify( UserGuard { plan } )).run()
       case _ =>
         println("Needs two parameters: hostname port")
     }

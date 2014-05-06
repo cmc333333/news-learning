@@ -8,7 +8,8 @@ trait DBProfile {
   val profile: JdbcProfile
 }
 
-object DB extends ArticleComponent with CacheComponent with DBProfile {
+object DB extends ArticleComponent with CacheComponent
+  with TrainingSetComponent with DBProfile {
   lazy val config = ConfigFactory.load()
   lazy val dbUrl = config.getString("db.url")
   lazy val dbUsername = {
@@ -21,19 +22,19 @@ object DB extends ArticleComponent with CacheComponent with DBProfile {
   }
   override lazy val profile:JdbcProfile = dbUrl.split(":")(1) match {
     case "derby" => DerbyDriver
-    case "h2" => H2Driver
     case "hsqldb" => HsqldbDriver
     case "mysql" => MySQLDriver
-    case "postres" => PostgresDriver
-    case _ => SQLiteDriver
+    case "postresql" => PostgresDriver
+    case "sqlite" => SQLiteDriver
+    case _ => H2Driver
   }
   lazy val driver = dbUrl.split(":")(1) match {
     case "derby" => "org.apache.derby.jdbc.EmbeddedDriver"
-    case "h2" => "org.h2.Driver"
     case "hsqldb" => "org.hsqldb.jdbc.JDBCDriver"
     case "mysql" => "com.mysql.jdbc.Driver"
-    case "postres" => "org.postgresql.Driver"
-    case _ => "org.sqlite.JDBC"
+    case "postresql" => "org.postgresql.Driver"
+    case "sqlite" => "org.sqlite.JDBC"
+    case _ => "org.h2.Driver"
   }
   lazy val imports = profile.simple
 

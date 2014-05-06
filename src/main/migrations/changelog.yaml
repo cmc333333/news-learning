@@ -46,3 +46,71 @@ databaseChangeLog:
       rollback:
         - dropTable:
           tableName: http_cache
+  - changeSet:
+      id: 3
+      author: cmc
+      changes:
+        - createTable:
+            tableName: training_set
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - addAutoIncrement:
+            columnDataType: int
+            columnName: id
+            tableName: training_set
+      rollback:
+        - dropTable:
+          tableName: training_set
+  - changeSet:
+      id: 4
+      author: cmc
+      changes:
+        - createTable:
+            tableName: training_data
+            columns:
+              - column:
+                  name: training_set_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: article_id
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: training_set_id
+            baseTableName: training_data
+            constraintName: training_data_set
+            referencedColumnNames: id
+            referencedTableName: training_set
+        - addForeignKeyConstraint:
+            baseColumnNames: article_id
+            baseTableName: training_data
+            constraintName: training_article
+            referencedColumnNames: url
+            referencedTableName: article
+      rollback:
+        - dropTable:
+            tableName: training_data
+        - dropForeignKeyConstraint:
+            baseTableName: training_data
+            constraintName: training_data_set
+        - dropForeignKeyConstraint:
+            baseTableName: training_data
+            constraintName: training_article
