@@ -7,11 +7,19 @@ databaseChangeLog:
             tableName: article
             columns:
               - column:
-                  name: url
-                  type: varchar(200)
+                  name: id
+                  type: int
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
                     nullable: false
+                    unique: true
+              - column:
+                  name: url
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+                    unique: true
               - column:
                   name: title
                   type: varchar(100)
@@ -38,6 +46,7 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
+                    unique: true
               - column:
                   name: body
                   type: text
@@ -56,18 +65,16 @@ databaseChangeLog:
               - column:
                   name: id
                   type: int
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
                     nullable: false
+                    unique: true
               - column:
                   name: name
                   type: varchar(100)
                   constraints:
                     nullable: false
-        - addAutoIncrement:
-            columnDataType: int
-            columnName: id
-            tableName: training_set
       rollback:
         - dropTable:
           tableName: training_set
@@ -85,7 +92,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: article_id
-                  type: varchar(200)
+                  type: int
                   constraints:
                     nullable: false
               - column:
@@ -103,7 +110,7 @@ databaseChangeLog:
             baseColumnNames: article_id
             baseTableName: training_data
             constraintName: training_article
-            referencedColumnNames: url
+            referencedColumnNames: id
             referencedTableName: article
       rollback:
         - dropTable:

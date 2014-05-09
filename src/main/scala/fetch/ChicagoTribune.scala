@@ -24,7 +24,7 @@ object ChicagoTribune {
         val article = for (soup <- cache.proxy(link)) yield {
           val body = soup.select("#story-body-text > p").map(_.text)
                          .mkString("\n")
-          val art = Article(link, title, body)
+          val art = Article(0, link, title, body)
           val previous = for { a <- DB.articles if a.url === link} 
                          yield (a.title, a.body)
           if (previous.exists.run) {
