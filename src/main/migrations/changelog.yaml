@@ -121,3 +121,20 @@ databaseChangeLog:
         - dropForeignKeyConstraint:
             baseTableName: training_data
             constraintName: training_article
+  - changeSet:
+      id: 5
+      author: cmc
+      changes:
+        - addColumn:
+            tableName: training_set
+            columns:
+              - column:
+                  name: uuid
+                  type: varchar(25)
+                  constraints:
+                    nullable: false
+                    unique: true
+      rollback:
+        - dropColumn:
+            tableName: training_set
+            columnName: uuid
