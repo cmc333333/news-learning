@@ -1,0 +1,16 @@
+-@ val errors: List[String]
+
+!!! 5
+html(lang="en")
+  head
+    title Create New Training Set
+  body
+    - if (errors.nonEmpty)
+      div(class="errors")
+        ul
+          - for(error <- errors)
+            li= error
+    form(method="POST")
+      p Give it a title
+      input(type="text" name="name")
+      input(type="submit" value="Create")

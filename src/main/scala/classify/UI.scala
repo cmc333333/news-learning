@@ -6,6 +6,8 @@ import unfiltered.jetty.Http
 import unfiltered.request._
 import unfiltered.response._
 
+import info.cmlubinski.newslearning.classify.trainingset.{New => NewTrainingSet}
+
 
 object UI {
   val display = Cycle.Intent[Any, Any] {
@@ -19,7 +21,9 @@ object UI {
           case "true" :: _ => HTTPSGuard{ display }
           case _ => display
         }
-        Http(port.toInt, hostname).plan(Planify( UserGuard { plan } )).run()
+        Http(port.toInt, hostname).plan(Planify( 
+          NewTrainingSet.intent onPass(UserGuard { plan })
+        )).run()
       case _ =>
         println("Needs two parameters: hostname port")
     }

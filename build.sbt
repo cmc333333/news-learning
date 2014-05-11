@@ -11,10 +11,13 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.2.0",
   "com.typesafe.slick" %% "slick" % "2.0.1",
   "com.h2database" % "h2" % "1.4.178",
+  "commons-codec" % "commons-codec" % "1.9",
   "net.databinder" %% "unfiltered-filter" % "0.7.1",
   "net.databinder" %% "unfiltered-jetty" % "0.7.1",
   "net.databinder.dispatch" %% "dispatch-core" % "0.11.0",
   "net.databinder.dispatch" %% "dispatch-jsoup" % "0.11.0",
+  "org.fusesource.scalate" %% "scalate-page" % "1.6.1",
+  "org.fusesource.scalate" %% "scalate-wikitext" % "1.6.1",
   "org.slf4j" % "slf4j-simple" % "1.7.7",
   "org.yaml" % "snakeyaml" % "1.13",
   "postgresql" % "postgresql" % "9.1-901.jdbc4"

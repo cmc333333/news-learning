@@ -2,7 +2,7 @@ package info.cmlubinski.newslearning.models
 
 import com.typesafe.config.ConfigFactory
 import scala.slick.driver._
-import scala.slick.jdbc.JdbcBackend.Database
+import scala.slick.jdbc.JdbcBackend.{Database, Session}
 
 trait DBProfile {
   val profile: JdbcProfile
@@ -40,4 +40,8 @@ object DB extends ArticleComponent with CacheComponent
 
   def createSession = Database.forURL(
     dbUrl, user=dbUsername, password=dbPassword, driver=driver).createSession
+
+  def withTransaction[T](fn:Session => T):T = Database.forURL(
+    dbUrl, user=dbUsername, password=dbPassword, driver=driver
+  ).withTransaction{ fn }
 }
