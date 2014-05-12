@@ -9,7 +9,7 @@ trait DBProfile {
 }
 
 object DB extends ArticleComponent with CacheComponent
-  with TrainingSetComponent with DBProfile {
+  with TrainingDataComponent with TrainingSetComponent with DBProfile {
   lazy val config = ConfigFactory.load()
   lazy val dbUrl = config.getString("db.url")
   lazy val dbUsername = {

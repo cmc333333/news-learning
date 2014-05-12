@@ -24,7 +24,8 @@ object Scalate {
     def write(writer: OutputStreamWriter) {
       val printWriter = new PrintWriter(writer)
       try {
-        val scalateTemplate = engine.load(template, bindings)
+        val scalateTemplate = engine.load(
+          template, /*Binding("errors", "List[String]") ::*/ bindings)
         val context = contextBuilder(Path(request), printWriter, engine)
         (additionalAttributes ++ attributes) foreach {
           case (k,v) => context.attributes(k) = v

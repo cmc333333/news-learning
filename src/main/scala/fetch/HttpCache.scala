@@ -16,7 +16,7 @@ class HttpCache {
   def proxy(urlStr:String)(implicit session:Session):Future[Document] = {
     DB.cache.filter(_.url === urlStr).list match {
       case CacheEntry(body, url) :: _ => Future { Jsoup.parse(body, url) }
-      case nil => for (result <- fetch(urlStr)) yield {
+      case Nil => for (result <- fetch(urlStr)) yield {
         DB.cache += CacheEntry(urlStr, result.toString)
         result
       }

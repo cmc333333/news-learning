@@ -22,7 +22,7 @@ object UI {
           case _ => display
         }
         Http(port.toInt, hostname).plan(Planify( 
-          NewTrainingSet.intent onPass(UserGuard { plan })
+          NewTrainingSet.intent onPass( Classify.intent)
         )).run()
       case _ =>
         println("Needs two parameters: hostname port")
