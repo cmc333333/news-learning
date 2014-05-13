@@ -22,6 +22,7 @@ object ChicagoTribune {
         val title = (item \\ "title")(0).text
         val link = (item \\ "link")(0).text
         val article = for (soup <- cache.proxy(link)) yield {
+          println(soup.toString)
           val body = soup.select("#story-body-text > p").map(_.text)
                          .mkString("\n")
           val art = Article(0, link, title, body)
