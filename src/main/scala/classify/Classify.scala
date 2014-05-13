@@ -1,6 +1,5 @@
 package info.cmlubinski.newslearning.classify
 
-import unfiltered.Cookie
 import unfiltered.filter.Plan
 import unfiltered.request._
 import unfiltered.response._
@@ -15,28 +14,19 @@ object Classify extends Plan {
   object ArticleParam extends Params.Extract("article_id",
     Params.first ~> Params.int)
 
-  def intent = {
-    case req@GET(Path("/classify")) & Cookies(cookies) => 
-      cookies("trainingset") match {
-        case Some(Cookie(_, uuid, _, _, _, _, _, _)) =>
-          unseenArticle(uuid) match {
-            case Some(article) => 
-              Scalate(req, "classify.jade", "article" -> article)
-            case None =>
-              Scalate(req, "classify-no-articles.jade")
-          }
-        case _ => Redirect("/trainingset/new")
+  def intent = TSIdGuard {
+    case req@GET(Path("/classify")) & TSId(uuid) => 
+      unseenArticle(uuid) match {
+        case Some(article) => 
+          Scalate(req, "classify.jade", "article" -> article)
+        case None =>
+          Scalate(req, "classify-no-articles.jade")
       }
-    case req@POST(Path("/classify") 
-                  & Params(params@ArticleParam(article_id))
-                  & Cookies(cookies)) =>
+    case req@POST(Path("/classify") & TSId(uuid)
+                  & Params(params@ArticleParam(article_id))) =>
       val value = params("classify-yes").length > 0
-      cookies("trainingset") match {
-        case Some(Cookie(_, uuid, _, _, _, _, _, _)) =>
-          classifyArticle(article_id, uuid, value)
-          Redirect("/classify")
-        case _ => Redirect("/trainingset/new")
-      }
+      classifyArticle(article_id, uuid, value)
+      Redirect("/classify")
   }
 
   def unseenArticle(uuid:String) = DB.withTransaction {

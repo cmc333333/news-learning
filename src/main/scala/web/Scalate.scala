@@ -4,7 +4,7 @@ package info.cmlubinski.newslearning.web
 import org.fusesource.scalate.{
   TemplateEngine, Binding, DefaultRenderContext, RenderContext}
 import unfiltered.request.{Path,HttpRequest}
-import unfiltered.response.{ResponseWriter}
+import unfiltered.response.{HtmlContent, ResponseWriter}
 import java.io.{File,OutputStreamWriter,PrintWriter}
 
 object Scalate {
@@ -20,7 +20,7 @@ object Scalate {
     contextBuilder: ToRenderContext = defaultRenderContext,
     bindings: List[Binding] = Nil,
     additionalAttributes: Seq[(String, Any)] = Nil
-  ) = new ResponseWriter {
+  ) = HtmlContent ~> new ResponseWriter {
     def write(writer: OutputStreamWriter) {
       val printWriter = new PrintWriter(writer)
       try {
