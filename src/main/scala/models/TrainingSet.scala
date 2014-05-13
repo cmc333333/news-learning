@@ -1,7 +1,8 @@
 package info.cmlubinski.newslearning.models
 
 
-case class TrainingSet(id: Int, name: String, uuid: String)
+case class TrainingSet(id: Int, name: String, uuid: String, yesLabel:String,
+                       noLabel: String)
 
 trait TrainingSetComponent {
   this:DBProfile =>
@@ -11,8 +12,10 @@ trait TrainingSetComponent {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[String]("name")
     def uuid = column[String]("uuid")
+    def yesLabel = column[String]("yes_label")
+    def noLabel = column[String]("no_label")
     
-    def * = (id, name, uuid) <> (TrainingSet.tupled, TrainingSet.unapply)
+    def * = (id, name, uuid, yesLabel, noLabel) <> (TrainingSet.tupled, TrainingSet.unapply)
   }
 
   val trainingSets = TableQuery[TrainingSets]

@@ -18,7 +18,9 @@ object Classify extends Plan {
     case req@GET(Path("/classify")) & TS(tset) => 
       unseenArticle(tset) match {
         case Some(article) => 
-          Scalate(req, "classify.jade", "article" -> article)
+          Scalate(req, "classify.jade",
+                  "article" -> article,
+                  "tset" -> tset)
         case None =>
           Scalate(req, "classify-no-articles.jade")
       }

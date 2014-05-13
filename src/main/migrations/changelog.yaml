@@ -138,3 +138,29 @@ databaseChangeLog:
         - dropColumn:
             tableName: training_set
             columnName: uuid
+  - changeSet:
+      id: 6
+      author: cmc
+      changes:
+        - addColumn:
+            tableName: training_set
+            columns:
+              - column:
+                  name: yes_label
+                  type: varchar(25)
+                  constraints:
+                    nullable: false
+                    defaultValue: Yes
+              - column:
+                  name: no_label
+                  type: varchar(25)
+                  constraints:
+                    nullable: false
+                    defaultValue: No
+      rollback:
+        - dropColumn:
+            tableName: training_set
+            columnName: yes_label
+        - dropColumn:
+            tableName: training_set
+            columnName: no_label

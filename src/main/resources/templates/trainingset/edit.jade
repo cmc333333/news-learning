@@ -1,0 +1,12 @@
+-@ val tset: info.cmlubinski.newslearning.models.TrainingSet
+
+!!! 5
+html(lang="en")
+  head
+    title Edit Training Set
+  body
+    form(method="POST")
+      input(type="text" name="name" value={tset.name})
+      input(type="text" name="yes_label" value={tset.yesLabel})
+      input(type="text" name="no_label" value={tset.noLabel})
+      input(type="submit" value="Edit")

@@ -1,4 +1,5 @@
 -@ val article: info.cmlubinski.newslearning.models.Article
+-@ val tset: info.cmlubinski.newslearning.models.TrainingSet
 
 !!!5
 html(lang="en")
@@ -10,5 +11,5 @@ html(lang="en")
     form(method="POST")
       p Classify
       input(type="hidden" name="article_id" value={article.id})
-      input(type="submit" name="classify-yes" value="Yes")
-      input(type="submit" name="classify-no" value="No")
+      input(type="submit" name="classify-yes" value={tset.yesLabel})
+      input(type="submit" name="classify-no" value={tset.noLabel})

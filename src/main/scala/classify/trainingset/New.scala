@@ -37,7 +37,7 @@ object New extends Plan {
     sr.nextBytes(uuidBytes)
     val uuid = Base64.encodeBase64URLSafeString(uuidBytes)
 
-    val ts = TrainingSet(0, name, uuid)
+    val ts = TrainingSet(0, name.take(100), uuid, "Yes", "No")
     DB.trainingSets += ts
     ts
   }
