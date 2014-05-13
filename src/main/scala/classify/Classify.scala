@@ -14,50 +14,45 @@ object Classify extends Plan {
   object ArticleParam extends Params.Extract("article_id",
     Params.first ~> Params.int)
 
-  def intent = TSIdGuard {
-    case req@GET(Path("/classify")) & TSId(uuid) => 
-      unseenArticle(uuid) match {
+  def intent = TSGuard {
+    case req@GET(Path("/classify")) & TS(tset) => 
+      unseenArticle(tset) match {
         case Some(article) => 
           Scalate(req, "classify.jade", "article" -> article)
         case None =>
           Scalate(req, "classify-no-articles.jade")
       }
-    case req@POST(Path("/classify") & TSId(uuid)
+    case req@POST(Path("/classify") & TS(tset)
                   & Params(params@ArticleParam(article_id))) =>
       val value = params("classify-yes").length > 0
-      classifyArticle(article_id, uuid, value)
+      classifyArticle(article_id, tset, value)
       Redirect("/classify")
   }
 
-  def unseenArticle(uuid:String) = DB.withTransaction {
+  def unseenArticle(tset:TrainingSet) = DB.withTransaction {
     implicit session =>
 
     val query = for (
-      ((a, d), s) <- 
-        DB.articles
-        leftJoin DB.trainingData on(_.id === _.article_id)
-        leftJoin DB.trainingSets on((pair, s) =>
-                                    pair._2.training_set_id === s.id
-                                    && s.uuid === uuid)
+      (a, d) <- 
+      DB.articles
+      leftJoin DB.trainingData on((a, d) =>
+                                  a.id === d.article_id
+                                  && d.training_set_id === tset.id)
       if d.article_id.isNull
     ) yield a
     query.take(1).list.headOption
   }
-  def classifyArticle(article_id:Int, uuid:String, value:Boolean) {
+  def classifyArticle(article_id:Int, tset:TrainingSet, value:Boolean) {
     DB.withTransaction {
       implicit session =>
 
-      DB.trainingSets.filter(_.uuid === uuid).list match {
-        case TrainingSet(ts_id, name, uuid) :: _ =>
-          val previous = for (d <- DB.trainingData
-                              if d.training_set_id === ts_id
-                              && d.article_id === article_id) yield d.value
-          if (previous.exists.run) {
-            previous.update(value)
-          } else {
-            DB.trainingData += (ts_id, article_id, value)
-          }
-        case Nil => ()
+      val previous = for (d <- DB.trainingData
+                          if d.training_set_id === tset.id
+                          && d.article_id === article_id) yield d.value
+      if (previous.exists.run) {
+        previous.update(value)
+      } else {
+        DB.trainingData += (tset.id, article_id, value)
       }
     }
   }
