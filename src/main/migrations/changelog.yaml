@@ -164,3 +164,64 @@ databaseChangeLog:
         - dropColumn:
             tableName: training_set
             columnName: no_label
+  - changeSet:
+      id: 7
+      author: cmc
+      changes:
+        - createTable:
+            tableName: unigram
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primayKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: word
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: article_unigram
+            columns:
+              - column:
+                  name: article_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unigram_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: count
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: article_id
+            baseTableName: article_unigram
+            constraintName: article_unigram_article
+            referencedColumnNames: id
+            referencedTableName: article
+        - addForeignKeyConstraint:
+            baseColumnNames: unigram_id
+            baseTableName: article_unigram
+            constraintName: article_unigram_unigram
+            referencedColumnNames: id
+            referencedTableName: unigram
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: article_unigram
+            constraintName: article_unigram_article
+        - dropForeignKeyConstraint:
+            baseTableName: article_unigram
+            constraintName: article_unigram_unigram
+        - dropTable:
+            tableName: article_unigram
+        - dropTable:
+            tableName: unigram
