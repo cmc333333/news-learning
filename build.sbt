@@ -18,6 +18,7 @@ libraryDependencies ++= Seq(
   "net.databinder.dispatch" %% "dispatch-jsoup" % "0.11.0",
   "org.fusesource.scalate" %% "scalate-page" % "1.6.1",
   "org.fusesource.scalate" %% "scalate-wikitext" % "1.6.1",
+  "org.scalanlp" % "chalk" % "1.3.0",
   "org.slf4j" % "slf4j-simple" % "1.7.7",
   "org.yaml" % "snakeyaml" % "1.13",
   "postgresql" % "postgresql" % "9.1-901.jdbc4"

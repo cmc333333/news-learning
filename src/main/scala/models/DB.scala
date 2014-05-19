@@ -8,7 +8,7 @@ trait DBProfile {
   val profile: JdbcProfile
 }
 
-object DB extends ArticleComponent with CacheComponent
+object DB extends ArticleComponent with CacheComponent with UnigramComponent
   with TrainingDataComponent with TrainingSetComponent with DBProfile {
   lazy val config = ConfigFactory.load()
   lazy val dbUrl = config.getString("db.url")
