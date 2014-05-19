@@ -1,5 +1,8 @@
 #!/bin/bash
 
-kill `ps -ef | grep java | grep -v grep | awk '{ print $2 }'` > /dev/null 2>&1
-exit 0
-
+for FILE in `ls ${OPENSHIFT_DATA_DIR}pid-*`
+do
+  LEN=`expr ${#OPENSHIFT_DATA_DIR} + 4`
+  kill ${FILE:LEN}
+  rm $FILE
+done
