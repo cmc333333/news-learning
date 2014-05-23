@@ -37,5 +37,3 @@ liquibasePassword := ""
 liquibaseChangelog := "src/main/migrations/changelog.yaml"
 
 seq(SbtStartScript.startScriptForClassesSettings: _*)
-
-net.virtualvoid.sbt.graph.Plugin.graphSettings
