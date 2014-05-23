@@ -5,7 +5,7 @@ name := "newslearning"
 
 version := "0.1"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.0"
 
 libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.2.0",
@@ -37,3 +37,5 @@ liquibasePassword := ""
 liquibaseChangelog := "src/main/migrations/changelog.yaml"
 
 seq(SbtStartScript.startScriptForClassesSettings: _*)
+
+net.virtualvoid.sbt.graph.Plugin.graphSettings
