@@ -9,7 +9,7 @@ import unfiltered.request._
 import unfiltered.response._
 
 import info.cmlubinski.newslearning.models.{DB, TrainingSet}
-import info.cmlubinski.newslearning.web.Scalate
+import info.cmlubinski.newslearning.web.Jade
 
 
 object New extends Plan {
@@ -20,7 +20,7 @@ object New extends Plan {
 
   def intent = {
     case req@GET(Path("/trainingset/new")) & Params(params) => 
-      Scalate(req, "trainingset/new.jade",
+      Jade(req, "trainingset/new.jade",
               "errors" -> params("error").toList)
     case req@POST(Path("/trainingset/new") & Params(NameParam(name))) =>
       val ts = newSet(name)

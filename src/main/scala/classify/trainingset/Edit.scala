@@ -7,7 +7,7 @@ import unfiltered.response._
 
 import info.cmlubinski.newslearning.classify.{TSGuard, TS}
 import info.cmlubinski.newslearning.models.{DB, TrainingSet}
-import info.cmlubinski.newslearning.web.Scalate
+import info.cmlubinski.newslearning.web.Jade
 
 
 object Edit extends Plan {
@@ -20,7 +20,7 @@ object Edit extends Plan {
 
   def intent = TSGuard{
     case req@GET(Path("/trainingset/edit")) & TS(tset) => 
-      Scalate(req, "trainingset/edit.jade", "tset" -> tset)
+      Jade(req, "trainingset/edit.jade", "tset" -> tset)
     case req@POST(Path("/trainingset/edit") & TS(tset)
                   & Params(YesLabel(yesLabel) & NoLabel(noLabel)
                            & New.NameParam(name))) =>

@@ -5,7 +5,7 @@ import unfiltered.request._
 import unfiltered.response._
 
 import info.cmlubinski.newslearning.models.{DB, TrainingSet}
-import info.cmlubinski.newslearning.web.Scalate
+import info.cmlubinski.newslearning.web.Jade
 
 
 object Classify extends Plan {
@@ -18,11 +18,9 @@ object Classify extends Plan {
     case req@GET(Path("/classify")) & TS(tset) => 
       unseenArticle(tset) match {
         case Some(article) => 
-          Scalate(req, "classify.jade",
-                  "article" -> article,
-                  "tset" -> tset)
+          Jade(req, "classify.jade", "article" -> article, "tset" -> tset)
         case None =>
-          Scalate(req, "classify-no-articles.jade")
+          Jade(req, "classify-no-articles.jade")
       }
     case req@POST(Path("/classify") & TS(tset)
                   & Params(params@ArticleParam(article_id))) =>
