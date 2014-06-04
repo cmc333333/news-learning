@@ -33,9 +33,11 @@ object Unigram {
     wordCounts.toMap
   }
 
-  val featurizer = new Featurizer[String, String] {
-    def apply(text: String) = {
-      for ((word, count) <- wordCounts(text).toSeq)
+  val featurizer = new Featurizer[Article, String] {
+    def apply(article: Article) = {
+      for ((word, count) <- wordCounts(article.title).toSeq)
+      yield FeatureObservation("title:" + word, count.toFloat)
+      for ((word, count) <- wordCounts(article.body).toSeq)
       yield FeatureObservation(word, count.toFloat)
     }
   }
@@ -45,24 +47,28 @@ object Unigram {
     DB.withTransaction {
       implicit session =>
 
-      val training = (for (data <- DB.trainingData;
-                          article <- DB.articles
-                          if data.article_id === article.id)
-                      yield (data.value, article)).iterator.map{ pair =>
-                        val (label, article) = pair
-                        Example(label.toString,
-                                article.title + ". " + article.body,
-                                article.id.toString)
-                     }.toList
-      val config = LiblinearConfig()
-      val classifier = trainClassifier(config, featurizer, training)
+      val trainingModels = for (data <- DB.trainingData;
+                                article <- DB.articles
+                                if data.article_id === article.id)
+                           yield (data.value, article)
 
-      println(classifier.predict("Some shooting"))
-      println(classifier.evalRaw("Some shooting").toList)
-      println(classifier.predict("Baloney"))
-      println(classifier.evalRaw("Baloney").toList)
-      println(classifier.predict("Two dead"))
-      println(classifier.evalRaw("Two dead").toList)
+      val trainingSet = trainingModels.list.map{
+        case (label, article) => Example(label.toString, article,
+                                         article.id.toString)
+      }
+
+      val config = LiblinearConfig()
+      val classifier = trainClassifier(config, featurizer, trainingSet)
+
+      var a1 = Article(0, "", "Some shooting", "Contains no other details")
+      var a2 = Article(0, "", "Some shooting", "Contains shooting details")
+      var a3 = Article(0, "", "Something Innocuous", "Contains details")
+      var a4 = Article(0, "", "Something Innocuous", "Contains shooting")
+      for (a <- List(a1, a2, a3, a4)) {
+        println(a)
+        println(classifier.predict(a))
+        println(classifier.evalRaw(a).toList)
+      }
     }
   }
 }
