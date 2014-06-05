@@ -1,7 +1,5 @@
 package info.cmlubinski.newslearning.classify
 
-import java.lang.{Double => JDouble}
-
 import unfiltered.filter.Plan
 import unfiltered.request._
 import unfiltered.response._
@@ -32,7 +30,7 @@ object Classify extends Plan {
               val prediction:Double = classifier.evalRaw(article)(1)
               Jade(req, "classify.jade", 
                    "article" -> article, "tset" -> tset,
-                   "prediction" -> new JDouble(prediction))
+                   "prediction" -> "%.2f".format(prediction * 100))
           }
         }
         case None =>

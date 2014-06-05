@@ -10,4 +10,5 @@ html(lang="en")
       input(type="hidden", name="article_id", value={article.id()})
       input(type="submit", name="classify-yes", value={tset.yesLabel()})
       input(type="submit", name="classify-no", value={tset.noLabel()})
-      p=prediction
+      if prediction
+        p={prediction + "%"}
