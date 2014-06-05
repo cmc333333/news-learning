@@ -10,7 +10,7 @@ import nak.data.{Example, Featurizer, FeatureObservation}
 import nak.liblinear.LiblinearConfig
 import nak.NakContext.trainClassifier
 
-import info.cmlubinski.newslearning.models.{Article, DB}
+import info.cmlubinski.newslearning.models.{Article, DB, ModelDatum}
 
 
 object Unigram {
@@ -69,7 +69,8 @@ object Unigram {
 
           DB.modelData.filter(md => md.training_set_id === trainingSet.id
                                     && md.model_type === 1).delete
-          DB.modelData += (trainingSet.id, 1, byteStream.toByteArray())
+          DB.modelData += ModelDatum(trainingSet.id, 1,
+                                     byteStream.toByteArray())
         }
       }
     }

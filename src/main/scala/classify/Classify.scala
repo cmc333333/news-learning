@@ -1,5 +1,7 @@
 package info.cmlubinski.newslearning.classify
 
+import java.lang.{Double => JDouble}
+
 import unfiltered.filter.Plan
 import unfiltered.request._
 import unfiltered.response._
@@ -17,8 +19,22 @@ object Classify extends Plan {
   def intent = TSGuard {
     case req@GET(Path("/classify")) & TS(tset) => 
       unseenArticle(tset) match {
-        case Some(article) => 
-          Jade(req, "classify.jade", "article" -> article, "tset" -> tset)
+        case Some(article) => DB.withTransaction {
+          implicit session =>
+          
+          DB.modelData.filter(md => 
+              md.training_set_id === tset.id
+              && md.model_type === 1).take(1).list match {
+            case Nil => Jade(req, "classify.jade", 
+                             "article" -> article, "tset" -> tset)
+            case md :: _ => 
+              val classifier = md.featurizer
+              val prediction:Double = classifier.evalRaw(article)(1)
+              Jade(req, "classify.jade", 
+                   "article" -> article, "tset" -> tset,
+                   "prediction" -> new JDouble(prediction))
+          }
+        }
         case None =>
           Jade(req, "classify-no-articles.jade")
       }
