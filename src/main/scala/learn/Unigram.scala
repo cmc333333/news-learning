@@ -42,7 +42,6 @@ object Unigram {
     }
   }
 
-
   def main(args:Array[String]) {
     DB.withTransaction {
       implicit session =>
