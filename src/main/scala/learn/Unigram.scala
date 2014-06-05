@@ -1,5 +1,6 @@
 package info.cmlubinski.newslearning.learn
 
+import java.io.{ByteArrayOutputStream, ObjectOutputStream}
 import scala.collection.mutable
 
 import chalk.text.analyze.PorterStemmer
@@ -46,27 +47,30 @@ object Unigram {
     DB.withTransaction {
       implicit session =>
 
-      val trainingModels = for (data <- DB.trainingData;
-                                article <- DB.articles
-                                if data.article_id === article.id)
-                           yield (data.value, article)
+      for (trainingSet <- DB.trainingSets) {
+        val labXarts = for (data <- DB.trainingData;
+                            article <- DB.articles
+                            if data.article_id === article.id
+                            && data.training_set_id === trainingSet.id)
+                       yield (data.value, article)
 
-      val trainingSet = trainingModels.list.map{
-        case (label, article) => Example(label.toString, article,
-                                         article.id.toString)
-      }
+        val examples = labXarts.list.map{
+          case (label, article) => Example(label.toString, article,
+                                           article.id.toString)
+        }
 
-      val config = LiblinearConfig()
-      val classifier = trainClassifier(config, featurizer, trainingSet)
+        if (examples.nonEmpty) {
+          val config = LiblinearConfig()
+          val classifier = trainClassifier(config, featurizer, examples)
 
-      var a1 = Article(0, "", "Some shooting", "Contains no other details")
-      var a2 = Article(0, "", "Some shooting", "Contains shooting details")
-      var a3 = Article(0, "", "Something Innocuous", "Contains details")
-      var a4 = Article(0, "", "Something Innocuous", "Contains shooting")
-      for (a <- List(a1, a2, a3, a4)) {
-        println(a)
-        println(classifier.predict(a))
-        println(classifier.evalRaw(a).toList)
+          val byteStream = new ByteArrayOutputStream()
+          new ObjectOutputStream(byteStream).writeObject(classifier)
+          byteStream.close()
+
+          DB.modelData.filter(md => md.training_set_id === trainingSet.id
+                                    && md.model_type === 1).delete
+          DB.modelData += (trainingSet.id, 1, byteStream.toByteArray())
+        }
       }
     }
   }
