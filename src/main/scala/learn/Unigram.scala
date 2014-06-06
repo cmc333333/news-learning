@@ -10,7 +10,7 @@ import nak.data.{Example, Featurizer, FeatureObservation}
 import nak.liblinear.LiblinearConfig
 import nak.NakContext.trainClassifier
 
-import info.cmlubinski.newslearning.models.{Article, DB, ModelDatum}
+import info.cmlubinski.newslearning.models.{Article, DB, ModelDatum, ModelType}
 
 
 object Unigram {
@@ -47,31 +47,36 @@ object Unigram {
     DB.withTransaction {
       implicit session =>
 
-      for (trainingSet <- DB.trainingSets) {
-        val labXarts = for (data <- DB.trainingData;
-                            article <- DB.articles
-                            if data.article_id === article.id
-                            && data.training_set_id === trainingSet.id)
-                       yield (data.value, article)
+      DB.modelTypes.filter(_.slug === "unigram").firstOption match {
+        case None => println("No unigram model")
+        case Some(modelType) =>
+          for (trainingSet <- DB.trainingSets) {
+            val labXarts = for (data <- DB.trainingData;
+                                article <- DB.articles
+                                if data.article_id === article.id
+                                && data.training_set_id === trainingSet.id)
+                           yield (data.value, article)
 
-        val examples = labXarts.list.map{
-          case (label, article) => Example(label.toString, article,
-                                           article.id.toString)
-        }
+            val examples = labXarts.list.map{
+              case (label, article) => Example(label.toString, article,
+                                               article.id.toString)
+            }
 
-        if (examples.nonEmpty) {
-          val config = LiblinearConfig()
-          val classifier = trainClassifier(config, featurizer, examples)
+            if (examples.nonEmpty) {
+              val config = LiblinearConfig()
+              val classifier = trainClassifier(config, featurizer, examples)
 
-          val byteStream = new ByteArrayOutputStream()
-          new ObjectOutputStream(byteStream).writeObject(classifier)
-          byteStream.close()
+              val byteStream = new ByteArrayOutputStream()
+              new ObjectOutputStream(byteStream).writeObject(classifier)
+              byteStream.close()
 
-          DB.modelData.filter(md => md.training_set_id === trainingSet.id
-                                    && md.model_type === 1).delete
-          DB.modelData += ModelDatum(trainingSet.id, 1,
-                                     byteStream.toByteArray())
-        }
+              DB.modelData.filter(md => 
+                  md.training_set_id === trainingSet.id
+                  && md.model_type === modelType.id).delete
+              DB.modelData += ModelDatum(trainingSet.id, modelType.id,
+                                         byteStream.toByteArray())
+            }
+          }
       }
     }
   }

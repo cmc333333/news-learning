@@ -1,5 +1,7 @@
 package info.cmlubinski.newslearning.classify
 
+import scala.collection.JavaConverters._
+
 import unfiltered.filter.Plan
 import unfiltered.request._
 import unfiltered.response._
@@ -20,18 +22,19 @@ object Classify extends Plan {
         case Some(article) => DB.withTransaction {
           implicit session =>
           
-          DB.modelData.filter(md => 
-              md.training_set_id === tset.id
-              && md.model_type === 1).take(1).list match {
-            case Nil => Jade(req, "classify.jade", 
-                             "article" -> article, "tset" -> tset)
-            case md :: _ => 
-              val classifier = md.featurizer
+          val mtXp = (for (modelData <- DB.modelData;
+                           modelType <- DB.modelTypes
+                           if modelData.training_set_id === tset.id
+                           && modelData.model_type === modelType.id)
+                      yield (modelData, modelType)).list.map{
+            case (modelData, modelType) =>
+              val classifier = modelData.featurizer
               val prediction:Double = classifier.evalRaw(article)(1)
-              Jade(req, "classify.jade", 
-                   "article" -> article, "tset" -> tset,
-                   "prediction" -> "%.2f".format(prediction * 100))
+              (modelType, "%.2f".format(prediction * 100))
           }
+
+          Jade(req, "classify.jade",
+               "article" -> article, "tset" -> tset, "mtXp" -> mtXp.asJava)
         }
         case None =>
           Jade(req, "classify-no-articles.jade")

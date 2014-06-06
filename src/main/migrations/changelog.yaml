@@ -320,3 +320,44 @@ databaseChangeLog:
             constraintName: model_data_training_set
         - dropTable:
             tableName: model_data
+  - changeSet:
+      id: 10
+      author: cmc
+      changes:
+        - createTable:
+            tableName: model_type
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: slug
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: varchar(250)
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+          tableName: model_type
+  - changeSet:
+      id: 11
+      author: cmc
+      changes:
+      - sql:
+          sql: >
+                  INSERT INTO model_type (slug, description)
+                  VALUES ('unigram', 'Unigram with counts')
+      rollback:
+      - sql:
+          sql: >
+                  DELETE FROM model_type WHERE slug = 'unigram'

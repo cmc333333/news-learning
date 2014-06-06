@@ -10,5 +10,10 @@ html(lang="en")
       input(type="hidden", name="article_id", value={article.id()})
       input(type="submit", name="classify-yes", value={tset.yesLabel()})
       input(type="submit", name="classify-no", value={tset.noLabel()})
-      if prediction
-        p={prediction + "%"}
+      table
+        for pair in mtXp
+          modelType = pair._1
+          prediction = pair._2
+          tr
+            td=modelType.description()
+            td={prediction + "%"}
