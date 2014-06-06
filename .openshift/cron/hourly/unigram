@@ -3,3 +3,4 @@
 cd $OPENSHIFT_REPO_DIR
 
 ./target/start info.cmlubinski.newslearning.learn.Unigram
+./target/start info.cmlubinski.newslearning.learn.DistinctUnigram

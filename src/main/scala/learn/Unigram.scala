@@ -13,7 +13,7 @@ import nak.NakContext.trainClassifier
 import info.cmlubinski.newslearning.models.{Article, DB, ModelDatum, ModelType}
 
 
-object Unigram {
+trait UnigramBase {
   import DB.imports._
 
   def toSentences(text:String):Iterable[String] = JavaSentenceSegmenter(text)
@@ -34,20 +34,14 @@ object Unigram {
     wordCounts.toMap
   }
 
-  val featurizer = new Featurizer[Article, String] {
-    def apply(article: Article) = {
-      for ((word, count) <- wordCounts(article.title).toSeq)
-      yield FeatureObservation("title:" + word, count.toFloat)
-      for ((word, count) <- wordCounts(article.body).toSeq)
-      yield FeatureObservation(word, count.toFloat)
-    }
-  }
+  val featurizer:Featurizer[Article, String]
+  val slug:String
 
   def main(args:Array[String]) {
     DB.withTransaction {
       implicit session =>
 
-      DB.modelTypes.filter(_.slug === "unigram").firstOption match {
+      DB.modelTypes.filter(_.slug === slug).firstOption match {
         case None => println("No unigram model")
         case Some(modelType) =>
           for (trainingSet <- DB.trainingSets) {
@@ -80,4 +74,28 @@ object Unigram {
       }
     }
   }
+}
+
+object Unigram extends UnigramBase {
+  override val featurizer = new Featurizer[Article, String] {
+    def apply(article: Article) = {
+      for ((word, count) <- wordCounts(article.title).toSeq)
+      yield FeatureObservation("title:" + word, count)
+      for ((word, count) <- wordCounts(article.body).toSeq)
+      yield FeatureObservation(word, count)
+    }
+  }
+  override val slug = "unigram"
+}
+
+object DistinctUnigram extends UnigramBase {
+  override val featurizer = new Featurizer[Article, String] {
+    def apply(article: Article) = {
+      for ((word, count) <- wordCounts(article.title).toSeq)
+      yield FeatureObservation("title:" + word)
+      for ((word, count) <- wordCounts(article.body).toSeq)
+      yield FeatureObservation(word)
+    }
+  }
+  override val slug = "distinct_unigram"
 }
