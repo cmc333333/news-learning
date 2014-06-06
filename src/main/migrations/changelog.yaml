@@ -373,3 +373,15 @@ databaseChangeLog:
       - sql:
           sql: >
                   DELETE FROM model_type WHERE slug = 'distinct_unigram'
+  - changeSet:
+      id: 13
+      author: cmc
+      changes:
+      - sql:
+          sql: >
+                  INSERT INTO model_type (slug, description)
+                  VALUES ('bigram', 'Bigram and Unigram w/ counts')
+      rollback:
+      - sql:
+          sql: >
+                  DELETE FROM model_type WHERE slug = 'bigram'
